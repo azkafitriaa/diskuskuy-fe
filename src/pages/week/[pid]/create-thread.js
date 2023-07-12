@@ -88,12 +88,10 @@ export default function CreateThread() {
           },
         },
         reference_file: [],
-        discussion_guide: {
-          deadline: deadline,
-          description: description,
-          mechanism_expectation: mechAndExp,
-        },
         title: title,
+        deadline: deadline,
+        description: description,
+        mechanism_expectation: mechAndExp,
         week: pid,
       };
 

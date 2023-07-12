@@ -3,7 +3,7 @@ import Link from "next/link";
 import styles from "@/styles/Home.module.css";
 import DosenInfo from "@/components/Home/DosenInfo";
 import { courseName, courseDescription, term } from "@/api/dummy/home";
-import { createWeek, fetchDosenData, fetchWeeksData } from "@/api/home-api";
+import { createWeek, fetchDosenData, fetchThreadMonth, fetchWeeksData } from "@/api/home-api";
 import CircularProgress from "@mui/material/CircularProgress";
 import AddIcon from "@mui/icons-material/Add";
 import CreateWeekPopUp from "@/components/Home/CreateWeekPopUp";
@@ -11,19 +11,30 @@ import { useRouter } from "next/router";
 import Navbar from "@/components/Navbar";
 import { getCookie, getCookies } from "cookies-next";
 import Head from "next/head";
-import { formatDateDeadline2 } from "@/utils/util";
+import { formatDateDeadline, formatDateDeadline2 } from "@/utils/util";
+import Calendar from 'react-calendar';
+import ServerTime from "@/components/Home/ServerTime";
+
 
 export default function Home() {
   const router = useRouter();
   const [weeksData, setWeeksData] = useState([]);
   const [dosenData, setDosenData] = useState([]);
+  const [threadMonthData, setThreadMonthData] = useState([]);
   const [showCreateWeekPopUp, setShowCreateWeekPopUp] = useState(false);
   const [weekNameInput, setWeekNameInput] = useState("");
   const [isLecturer, setIsLecture] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [value, onChange] = useState(new Date());
+  const [today, setToday] = useState(new Date());
+  const [todayMonth, setTodayMonth] = useState(null);
+  const [todayYear, setTodayYear] = useState(null);
+
+  const monthList = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
 
   useEffect(() => {
     setIsLoading(true);
+    fetchThreadMonth().then((data) => setThreadMonthData(data));
     fetchWeeksData().then((data) => setWeeksData(data));
     fetchDosenData().then((dosenData) => setDosenData(dosenData));
     setIsLecture(
@@ -32,6 +43,8 @@ export default function Home() {
         : false
     );
     setIsLoading(false);
+    setTodayMonth(monthList[today.getMonth()]);
+    setTodayYear(today.getFullYear())
   }, []);
 
   const handleShowCreateWeekPopUp = () => {
@@ -65,7 +78,8 @@ export default function Home() {
               Sistem Interaksi Genap 2022/2023
             </a>
           </div>
-          <div className="flex flex-col gap-5">
+          <div className="flex flex-row gap-5">
+          <div className="basis-3/4 flex flex-col gap-5">
             <div className="block p-6 h-44 bg-cover bg-[url('/images/header.png')] bg-purple rounded-lg text-white shadow-lg">
               <h1 className="mb-2 font-bold tracking-tight">{courseName}</h1>
               <p className="font-normal">({term})</p>
@@ -158,7 +172,7 @@ export default function Home() {
                       <p className="font-bold text-gray-700">
                         Forum Diskusi {week.name}
                       </p>
-                      <div className="h-1 w-5 bg-grey"></div>
+                      <div className="h-1 w-8 bg-grey"></div>
                       {week.threads.map((thread, i) => (
                         <div className={styles.threadCard} key={i}>
                           <div className="group flex items-center">
@@ -183,13 +197,13 @@ export default function Home() {
                           </div>
                           <div className="flex flex-row gap-2">
                             <Link href={"/forum/" + thread.id}>
-                              <button className="bg-transparent hover:bg-green text-green text-sm font-semibold hover:text-white py-2 px-4 border border-green hover:border-transparent rounded-lg">
+                              <button className="bg-transparent hover:bg-green text-green text-xs font-semibold hover:text-white py-2 px-4 border border-green hover:border-transparent rounded-lg">
                                 Lihat
                               </button>
                             </Link>
                             {isLecturer && (
                               <Link href={`/forum/${thread.id}/edit`}>
-                                <button className="bg-transparent hover:bg-green text-green text-sm font-semibold hover:text-white py-2 px-4 border border-green hover:border-transparent rounded-lg">
+                                <button className="bg-transparent hover:bg-green text-green text-xs font-semibold hover:text-white py-2 px-4 border border-green hover:border-transparent rounded-lg">
                                   Edit
                                 </button>
                               </Link>
@@ -201,6 +215,45 @@ export default function Home() {
                   )}
                 </div>
               ))}
+          </div>
+          <div className="basis-1/4 flex flex-col gap-5">
+            <div className="section">
+              <h3 className="font-bold text-gray">Waktu Server</h3>
+              <div className="h-1 w-8 bg-grey"></div>
+              <ServerTime />
+            </div>
+            <div className="section">
+              <h3 className="font-bold text-gray">Kalender</h3>
+              <div className="h-1 w-8 bg-grey"></div>
+              <p className="text-[#6B6B6B] font-bold text-center">{todayMonth} {todayYear}</p>
+              <div className="h-[1px] w-full bg-[#E2E2E2]"></div>
+              <Calendar onChange={onChange} value={value} className={styles.calendar} showNeighboringMonth={false} showNavigation={false}/>
+            </div>
+            <div className="section">
+              <h3 className="font-bold text-gray">Daftar Tugas</h3>
+              <div className="h-1 w-8 bg-grey"></div>
+              {!isLoading &&
+              threadMonthData &&
+              threadMonthData.length > 0 &&
+              threadMonthData.map((thread, i) => (
+              <div className="flex flex-row border rounded-lg p-3 gap-1 justify-between">
+                <div className="flex flex-col gap-1">
+                  <p className="text-xs">Aktivitas Forum:</p>
+                  <p className="font-bold text-xs">{thread.title}</p>
+                  <div className="bg-red text-white px-2 text-xs">Deadline: {formatDateDeadline(thread.deadline)}</div>
+                  <Link href={"/forum/" + thread.id}>
+                    <button className="bg-transparent hover:bg-green text-green text-xs font-semibold hover:text-white py-2 px-4 border border-green hover:border-transparent rounded-lg">
+                      Lihat
+                    </button>
+                  </Link>
+                </div>
+                <div className="flex flex-col gap-1">
+                <div className="h-5 w-5 border rounded"></div>
+                </div>
+              </div>
+              ))}
+            </div>
+          </div>
           </div>
         </div>
       </main>

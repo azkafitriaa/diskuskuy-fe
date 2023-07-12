@@ -100,3 +100,27 @@ export const fetchDosenData = async () => {
     toast.error(error.message)
   }
 };
+
+export const fetchThreadMonth = async () => {
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BE_URL}/forum/thread-month/`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Token ${JSON.parse(getCookie("auth"))?.token}`,
+        },
+      }
+    );
+
+    if (!response.ok) {
+      const responseError = await response.json();
+      const message = `${responseError.errors.error_message}`;
+      throw new Error(message);
+    }
+    const responseData = await response.json();
+    return responseData;
+  } catch (error) {
+    toast.error(error.message);
+  }
+};

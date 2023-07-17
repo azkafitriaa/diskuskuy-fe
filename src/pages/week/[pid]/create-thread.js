@@ -27,7 +27,7 @@ export default function CreateThread() {
   const [isLoading, setLoading] = useState(false);
   const [weekName, setWeekName] = useState("");
 
-  const tagOptions = ["Pendapat", "Pertanyaan", "Bingung"];
+  const tagOptions = ["pendapat", "pertanyaan", "bingung"];
 
   const { pid } = router.query;
 

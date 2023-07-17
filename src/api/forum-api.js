@@ -159,7 +159,59 @@ export const fetchReferences = async () => {
 export const addOrRemoveLikePost = async (postId) => {
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BE_URL}/post/reaction/${postId}/`,
+      `${process.env.NEXT_PUBLIC_BE_URL}/post/like/${postId}/`,
+      {
+        method: "POST",
+        headers: {
+          "Authorization": `Token ${JSON.parse(getCookie("auth"))?.token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      const responseError = await response.json();
+      const message = `${responseError.errors.error_message}`;
+      throw new Error(message);
+    }
+    const responseData = await response.json();
+    return responseData;
+  } catch (error) {
+    toast.error(error.message)
+  }
+};
+
+export const addOrRemoveClapPost = async (postId) => {
+  try {
+    const response = await fetch(
+        // TODO: ganti
+      `${process.env.NEXT_PUBLIC_BE_URL}/post/clap/${postId}/`,
+      {
+        method: "POST",
+        headers: {
+          "Authorization": `Token ${JSON.parse(getCookie("auth"))?.token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      const responseError = await response.json();
+      const message = `${responseError.errors.error_message}`;
+      throw new Error(message);
+    }
+    const responseData = await response.json();
+    return responseData;
+  } catch (error) {
+    toast.error(error.message)
+  }
+};
+
+export const addOrRemoveLovePost = async (postId) => {
+  try {
+    const response = await fetch(
+        // TODO: ganti
+      `${process.env.NEXT_PUBLIC_BE_URL}/post/love/${postId}/`,
       {
         method: "POST",
         headers: {

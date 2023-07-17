@@ -5,8 +5,9 @@ import { useState } from "react";
 import { useRouter } from "next/router";
 import { addOrRemoveClapPost, addOrRemoveLikePost, addOrRemoveLovePost } from "@/api/forum-api";
 import { getCookie } from "cookies-next";
+import CreatePostSection from "./CreatePostSection";
 
-export default function PostComponent({ threadTitle, post, type, parentId, parent, threadId }) {
+export default function PostComponent({ threadTitle, post, type, parentId, threadId }) {
   const userId = parseInt(JSON.parse(getCookie("auth"))?.user_id)
   const router = useRouter();
   const [numOfLikes, setNumOfLikes] = useState(post?.number_of_likes ?? 0);
@@ -16,24 +17,33 @@ export default function PostComponent({ threadTitle, post, type, parentId, paren
   const [isClapped, setIsClapped] = useState(post?.claps?.includes(userId) ? true : false)
   const [isLoved, setIsLoved] = useState(post?.loves?.includes(userId) ? true : false)
   const [isLoading, setisLoading] = useState(false)
+  const [showTextEditor, setShowSetTextEditor] = useState(false);
 
   const marginLeft =
     type == "reply" ? "50px" : type == "nestedReply" ? "100px" : "0px";
   const [tags, setTags] = useState(String(post.tag).split(","));
 
   const handleReply = () => {
-    if (type == "initial") {
-      router.push(`/reply/${post.id}/create-post`)
-    }
+    setShowSetTextEditor(true)
   }
 
-  const handleParentReply = () => {
-    router.push(`/reply/${threadId}/create-post?parent=${parentId}`)
+  const handleCancelReply = () => {
+    setShowSetTextEditor(false)
   }
 
-  const handleNestedParentReply = () => {
-    router.push(`/reply/${threadId}/create-post?parent=${parentId}&type=nested`)
-  }
+  // const handleReply = () => {
+  //   if (type == "initial") {
+  //     router.push(`/reply/${post.id}/create-post`)
+  //   }
+  // }
+
+  // const handleParentReply = () => {
+  //   router.push(`/reply/${threadId}/create-post?parent=${parentId}`)
+  // }
+
+  // const handleNestedParentReply = () => {
+  //   router.push(`/reply/${threadId}/create-post?parent=${parentId}&type=nested`)
+  // }
 
   const handleEditReply = () => {
     router.push(`/forum/${threadId}/edit-reply/${post.id}`)
@@ -124,7 +134,8 @@ export default function PostComponent({ threadTitle, post, type, parentId, paren
         <div className="flex flex-row gap-2 justify-between items-center">
           <div className="flex flex-row gap-2 items-center">
           {type !== "nestedReply" && (
-            <button className="bg-transparent font-bold text-sm px-4 py-1 hover:shadow-lg rounded-lg" onClick={parent ? type === "reply" ? handleNestedParentReply : handleParentReply : handleReply}>
+            // <button className="bg-transparent font-bold text-sm px-4 py-1 hover:shadow-lg rounded-lg" onClick={parent ? type === "reply" ? handleNestedParentReply : handleParentReply : handleReply}>
+            <button className="bg-transparent font-bold text-sm px-4 py-1 hover:shadow-lg rounded-lg" onClick={handleReply}>
               Balas <ExpandMoreIcon />
             </button>
           )}
@@ -149,6 +160,7 @@ export default function PostComponent({ threadTitle, post, type, parentId, paren
           </div>
           <p className="text-xs">Telah dilihat oleh <span className="text-[#667DF8]">6 partisipan</span></p>
         </div>
+        {showTextEditor && <CreatePostSection handleCancel={handleCancelReply} parentType={type} parentId={parentId}/>}
       </div>
     </div>
   );

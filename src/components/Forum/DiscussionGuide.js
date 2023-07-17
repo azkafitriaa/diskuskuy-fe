@@ -2,11 +2,13 @@ import React, { useState } from "react";
 import { formatDateDeadline } from "@/utils/util";
 
 export default function DiscussionGuide({
-  data,
+  deadlineData,
+  description,
+  mechanism_expectation,
   onSeeDiscussionGuide,
 }) {
   const [deadline, setDeadline] = useState(
-    data?.deadline ? formatDateDeadline(data.deadline) : null
+    deadlineData ? formatDateDeadline(deadlineData) : null
   );
 
   return (
@@ -21,11 +23,11 @@ export default function DiscussionGuide({
       <p>
         <strong>Deskripsi:</strong>
       </p>
-      <p>{data.description}</p>
+      <p>{description}</p>
       <p>
         <strong>Mekanisme dan Ekspektasi:</strong>
       </p>
-      <p>{data.mechanism_expectation}</p>
+      <p>{mechanism_expectation}</p>
       <a
         onClick={onSeeDiscussionGuide}
         className="text-blue cursor-pointer text-xs font-bold"

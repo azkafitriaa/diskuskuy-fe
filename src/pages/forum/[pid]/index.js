@@ -54,6 +54,12 @@ export default function Forum() {
     const pathArray = path.split("/");
     const threadId = pathArray[pathArray.length - 1];
 
+    if (navigator.onLine) {
+      console.log("online");
+    } else {
+      console.log("offline");
+    }
+
     fetchAnalytics(threadId).then((data) => {
       setAnalytics(data);
     });
@@ -126,6 +132,7 @@ export default function Forum() {
                   <PostComponent
                     parent
                     parentId={pid}
+                    threadTitle={forumData.title}
                     post={forumData.initial_post?.post}
                     threadId={forumData?.initial_post?.id}
                     type="initial"
@@ -158,15 +165,15 @@ export default function Forum() {
                     ))}
                 </div>
                 <div className="flex flex-col basis-1/3 gap-5">
-                  {forumData.discussion_guide && (
-                    <DiscussionGuide
-                      data={forumData.discussion_guide}
-                      onSeeDiscussionGuide={() =>
-                        router.push(forumData.id + "/discussion-guide")
-                      }
-                      isLecturer={isLecturer}
-                    />
-                  )}
+                  <DiscussionGuide
+                    deadlineData={forumData.deadline}
+                    description={forumData.description}
+                    mechanism_expectation={forumData.mechanism_expectation}
+                    onSeeDiscussionGuide={() =>
+                      router.push(forumData.id + "/discussion-guide")
+                    }
+                    isLecturer={isLecturer}
+                  />
                   <References
                     references={references}
                     pid={pid}

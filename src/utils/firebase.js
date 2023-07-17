@@ -12,8 +12,8 @@ const firebaseConfig = {
   projectId: "diskuskuy-refinement",
   storageBucket: "diskuskuy-refinement.appspot.com",
   messagingSenderId: "640555013695",
-  appId: "1:640555013695:web:ecae9f09e24ed2b3800a8a",
-  measurementId: "G-NNX03S78FY"
+  appId: "1:640555013695:web:54373a534d94e30c800a8a",
+  measurementId: "G-794FBHTD11"
 };
 
 // Initialize Firebase

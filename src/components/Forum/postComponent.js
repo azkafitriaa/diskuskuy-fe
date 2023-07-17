@@ -5,7 +5,7 @@ import { useState } from "react";
 import { useRouter } from "next/router";
 import { addOrRemoveClapPost, addOrRemoveLikePost, addOrRemoveLovePost } from "@/api/forum-api";
 import { getCookie } from "cookies-next";
-import CreatePostSection from "./CreatePostSection";
+import CreateEditPostSection from "./CreateEditPostSection";
 
 export default function PostComponent({ threadTitle, post, type, parentId, threadId }) {
   const userId = parseInt(JSON.parse(getCookie("auth"))?.user_id)
@@ -18,6 +18,7 @@ export default function PostComponent({ threadTitle, post, type, parentId, threa
   const [isLoved, setIsLoved] = useState(post?.loves?.includes(userId) ? true : false)
   const [isLoading, setisLoading] = useState(false)
   const [showTextEditor, setShowSetTextEditor] = useState(false);
+  const [showTextEditorEdit, setShowSetTextEditorEdit] = useState(false);
 
   const marginLeft =
     type == "reply" ? "50px" : type == "nestedReply" ? "100px" : "0px";
@@ -29,6 +30,7 @@ export default function PostComponent({ threadTitle, post, type, parentId, threa
 
   const handleCancelReply = () => {
     setShowSetTextEditor(false)
+    setShowSetTextEditorEdit(false)
   }
 
   // const handleReply = () => {
@@ -45,8 +47,11 @@ export default function PostComponent({ threadTitle, post, type, parentId, threa
   //   router.push(`/reply/${threadId}/create-post?parent=${parentId}&type=nested`)
   // }
 
+  // const handleEditReply = () => {
+  //   router.push(`/forum/${threadId}/edit-reply/${post.id}`)
+  // }
   const handleEditReply = () => {
-    router.push(`/forum/${threadId}/edit-reply/${post.id}`)
+    setShowSetTextEditorEdit(true);
   }
 
   const handleLikePost = () => {
@@ -100,8 +105,10 @@ export default function PostComponent({ threadTitle, post, type, parentId, threa
         {post.creator_role != 'lecturer' && <div className="px-2" style={{background: '#EED56B'}}><p>{post.creator_role == 'lecturer' ? 'Dosen' : 'Mahasiswa'}</p></div>}
       </div>
       <div className="flex flex-col basis-11/12 gap-2">
+        { !showTextEditorEdit &&
+        <>
         <div className="flex flex-col gap-1">
-          <div className="flex flex-row items-center justify-between">
+          <div className="flex flex-row items-start justify-between">
             <div className="flex flex-col gap-1">
               {threadTitle &&<h1 className="font-bold">{threadTitle}</h1>}
               {!threadTitle && <h3 className="font-bold">{post.creator_name}</h3>}
@@ -122,7 +129,8 @@ export default function PostComponent({ threadTitle, post, type, parentId, threa
               </div>
             </div>
             {post.creator == userId && (
-            <button className="bg-transparent hover:bg-green text-green text-xs hover:text-white px-4 py-1 border border-green hover:border-transparent rounded-lg" onClick={ handleEditReply }>
+            // <button className="bg-transparent hover:bg-green text-green text-xs hover:text-white px-4 py-1 border border-green hover:border-transparent rounded-lg" onClick={ handleEditReply }>
+              <button className="normal-case text-black font-bold bg-white rounded-lg border border-grey py-1 px-4 text-xs hover:border-green hover:bg-green4" onClick={ handleEditReply }>
                 Edit
               </button>
             )}
@@ -135,7 +143,7 @@ export default function PostComponent({ threadTitle, post, type, parentId, threa
           <div className="flex flex-row gap-2 items-center">
           {type !== "nestedReply" && (
             // <button className="bg-transparent font-bold text-sm px-4 py-1 hover:shadow-lg rounded-lg" onClick={parent ? type === "reply" ? handleNestedParentReply : handleParentReply : handleReply}>
-            <button className="bg-transparent font-bold text-sm px-4 py-1 hover:shadow-lg rounded-lg" onClick={handleReply}>
+            <button className="bg-transparent font-bold text-sm px-4 py-1 hover:shadow-lg rounded-lg" style={{boxShadow: showTextEditor ? "0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)" : null}} onClick={handleReply}>
               Balas <ExpandMoreIcon />
             </button>
           )}
@@ -160,7 +168,10 @@ export default function PostComponent({ threadTitle, post, type, parentId, threa
           </div>
           <p className="text-xs">Telah dilihat oleh <span className="text-[#667DF8]">6 partisipan</span></p>
         </div>
-        {showTextEditor && <CreatePostSection handleCancel={handleCancelReply} parentType={type} parentId={parentId}/>}
+        </>
+        }
+        {showTextEditorEdit && <CreateEditPostSection handleCancel={handleCancelReply} parentType={type} parentId={parentId} initialContent={post.content} initialTags={tags} initialThreadTitle={threadTitle} isEdit={true} postId={post.id} isInitialPost={type === 'initial'} threadId={threadId}/>}
+        {showTextEditor && <CreateEditPostSection handleCancel={handleCancelReply} parentType={type} parentId={parentId}/>}
       </div>
     </div>
   );

@@ -166,13 +166,14 @@ export default function Forum() {
                 </div>
                 <div className="flex flex-col basis-1/3 gap-5">
                   <DiscussionGuide
+                    threadId={pid}
                     deadlineData={forumData.deadline}
                     description={forumData.description}
-                    mechanism_expectation={forumData.mechanism_expectation}
+                    mechAndExp={forumData.mechanism_expectation}
                     onSeeDiscussionGuide={() =>
                       router.push(forumData.id + "/discussion-guide")
                     }
-                    isLecturer={isLecturer}
+                    showEditButton={isLecturer}
                   />
                   <References
                     references={references}

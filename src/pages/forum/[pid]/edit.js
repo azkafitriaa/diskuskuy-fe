@@ -14,8 +14,10 @@ import { toast } from "react-hot-toast";
 import { getCookie, getCookies } from "cookies-next";
 import Head from "next/head";
 import { format } from 'date-fns'
+import CloseIcon from '@mui/icons-material/Close';
 // import { createReferenceFile } from "@/api/create-thread-api";
 
+// TODO: cek bug konten initial post ga keedit & benerin ref file
 export default function EditThread() {
   const router = useRouter();
   const editorRef = useRef(null);
@@ -44,10 +46,10 @@ export default function EditThread() {
     .then(data => {
       setForumData(data)
       setTitle(data.title)
-      const deadlineData = data.discussion_guide.deadline
+      const deadlineData = data.deadline
       setDeadline(deadlineData.substring(0, deadlineData.length-1))
-      setDescription(data.discussion_guide.description)
-      setMechAndExp(data.discussion_guide.mechanism_expectation)
+      setDescription(data.description)
+      setMechAndExp(data.mechanism_expectation)
       setContent(data?.initial_post?.post?.content ?? "")
       const tagData = data.initial_post.post.tag.toLowerCase()
       setTags(tagData.split(","))
@@ -94,7 +96,7 @@ export default function EditThread() {
       setIsInitialPostEmpty(false);
 
       if(referenceFile) {
-        const upload = await firebase?.storage()?.ref("/")?.child(referenceFile[0]?.name)?.put(referenceFile[0]);
+        const upload = await firebase?.storage()?.ref(`/reference_file/${forumData.id}`)?.child(referenceFile[0]?.name)?.put(referenceFile[0]);
         const uploadUrl = await upload?.ref?.getDownloadURL();
 
         const request = {
@@ -117,15 +119,14 @@ export default function EditThread() {
               initial_post: {
                 post: {
                   tag: tags.join(),
+                  // kadang masuk kadang engga 
                   content: editorRef.current.getContent() ? editorRef.current.getContent() : content,
                 }
               },
               // reference_file: [],
-              discussion_guide: {
-                deadline: deadline,
-                description: description,
-                mechanism_expectation: mechAndExp,
-              },
+              deadline: deadline,
+              description: description,
+              mechanism_expectation: mechAndExp,
               title: title,
               week: forumData.week,
             };
@@ -142,15 +143,14 @@ export default function EditThread() {
           initial_post: {
             post: {
               tag: tags.join(),
-              content: editorRef.current.getContent(),
+              // kadang masuk kadang engga 
+              content: editorRef.current.getContent() ? editorRef.current.getContent() : content,
             }
           },
           // reference_file: referenceFileList,
-          discussion_guide: {
-            deadline: deadline,
-            description: description,
-            mechanism_expectation: mechAndExp,
-          },
+          deadline: deadline,
+          description: description,
+          mechanism_expectation: mechAndExp,
           title: title,
           week: forumData.week,
         };
@@ -252,6 +252,26 @@ export default function EditThread() {
                           className="flex flex-row items-center gap-2"
                           key={i}
                         >
+                          <button onClick={() => {
+                            const desertRef = firebase
+                            .storage()
+                            .ref(`/reference_file/${pid}/${file.title}`)
+                        
+                            desertRef.delete().then(function() {
+                              console.log("coba cek firebase")
+                              axios.delete(`${process.env.NEXT_PUBLIC_BE_URL}/forum/ReferenceFile/${object.id}`,
+                              {headers: {
+                                "Authorization": `Token ${JSON.parse(getCookie("auth"))?.token}`,
+                              }},
+                              ).then(() => {
+                                toast.success("Berhasil menghapus referensi diskusi")
+                                refresh()
+                              })
+                            }).catch(function(error) {
+                              toast.error("Gagal menghapus referensi diskusi")
+                            });
+                          }}
+                          ><CloseIcon /></button>
                           {(file.url ?? file.name).includes(".pdf") && (
                             <img src="/images/pdf-icon.png" width={"30px"} />
                           )}

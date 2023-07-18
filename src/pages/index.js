@@ -191,7 +191,7 @@ export default function Home() {
                               </h3>
                               <p className="text-xs w-full m-0 p-0">
                                 {thread?.initial_post?.post?.creator_name} |{" "}
-                                {formatDateDeadline2(thread?.discussion_guide?.deadline)}
+                                {formatDateDeadline2(thread?.deadline)}
                               </p>
                             </div>
                           </div>

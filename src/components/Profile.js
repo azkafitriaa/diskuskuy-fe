@@ -29,7 +29,7 @@ export default function Profile() {
           onClick={() => {}}
           className="cursor-pointer h-16 w-16 relative"
         >
-          <img src={profileData?.photo_url ?? "/images/default-prof-pic.png"} alt="prof-pic" className="rounded-full object-cover h-16 w-16"
+          <img src={JSON.parse(getCookie("auth"))?.photo_url ? JSON.parse(getCookie("auth"))?.photo_url : "/images/default-prof-pic.png"} alt="prof-pic" className="rounded-full object-cover h-16 w-16"
           />
           <img
             src="/images/edit-profile-pic.png"

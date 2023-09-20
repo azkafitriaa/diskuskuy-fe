@@ -54,27 +54,7 @@ export default function References({pid, references, refresh}) {
       </div>
       <div className="h-1 w-5 bg-grey"></div>
       {references.map((object, i) => (
-        <div className="flex flexr-row items-center">          
-          <button onClick={() => {
-            const desertRef = firebase
-            .storage()
-            .ref(`/reference_file/${pid}/${object.title}`)
-        
-            desertRef.delete().then(function() {
-              console.log("coba cek firebase")
-              axios.delete(`${process.env.NEXT_PUBLIC_BE_URL}/forum/ReferenceFile/${object.id}`,
-              {headers: {
-                "Authorization": `Token ${JSON.parse(getCookie("auth"))?.token}`,
-              }},
-              ).then(() => {
-                toast.success("Berhasil menghapus referensi diskusi")
-                refresh()
-              })
-            }).catch(function(error) {
-              toast.error("Gagal menghapus referensi diskusi")
-            });
-          }}
-          ><CloseIcon /></button>
+        <div className="flex flex-row items-center justify-between">          
           <div key={i} className="flex flex-row items-center gap-2 cursor-pointer" onClick={() => window.open(object.url, "_blank")}>
             {object.url.includes(".pdf") && <img src="/images/pdf-icon.png" width={"30px"} />}
             {object.url.includes(".png") && <img src="/images/png-icon.png" width={"30px"} />}
@@ -83,6 +63,27 @@ export default function References({pid, references, refresh}) {
               <p>{object.title}</p>
             </div>
           </div>
+          {JSON.parse(getCookie("auth"))?.role == "lecturer" && 
+            <button onClick={() => {
+              const desertRef = firebase
+              .storage()
+              .ref(`/reference_file/${pid}/${object.title}`)
+          
+              desertRef.delete().then(function() {
+                axios.delete(`${process.env.NEXT_PUBLIC_BE_URL}/forum/ReferenceFile/${object.id}`,
+                {headers: {
+                  "Authorization": `Token ${JSON.parse(getCookie("auth"))?.token}`,
+                }},
+                ).then(() => {
+                  toast.success("Berhasil menghapus referensi diskusi")
+                  refresh()
+                })
+              }).catch(function(error) {
+                toast.error("Gagal menghapus referensi diskusi")
+              });
+            }}
+            ><CloseIcon /></button>
+          }
         </div>
       ))}
     </div>

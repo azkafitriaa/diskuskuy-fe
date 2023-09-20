@@ -230,7 +230,7 @@ export default function Home() {
               <Calendar onChange={onChange} value={value} className={styles.calendar} showNeighboringMonth={false} showNavigation={false}/>
             </div>
             <div className="section">
-              <h3 className="font-bold text-gray">Daftar Tugas</h3>
+              <h3 className="font-bold text-gray">Daftar Tugas Hari Ini</h3>
               <div className="h-1 w-8 bg-grey"></div>
               {!isLoading &&
               threadMonthData &&

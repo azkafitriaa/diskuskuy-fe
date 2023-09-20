@@ -6,8 +6,10 @@ import { useRouter } from "next/router";
 import { addOrRemoveClapPost, addOrRemoveLikePost, addOrRemoveLovePost } from "@/api/forum-api";
 import { getCookie } from "cookies-next";
 import CreateEditPostSection from "./CreateEditPostSection";
+import CloseIcon from '@mui/icons-material/Close';
+import SeenByInfo from "./SeenByInfo";
 
-export default function PostComponent({ threadTitle, post, type, parentId, threadId }) {
+export default function PostComponent({ threadTitle, post, type, parentId, threadId, seenBy }) {
   const userId = parseInt(JSON.parse(getCookie("auth"))?.user_id)
   const router = useRouter();
   const [numOfLikes, setNumOfLikes] = useState(post?.number_of_likes ?? 0);
@@ -17,12 +19,18 @@ export default function PostComponent({ threadTitle, post, type, parentId, threa
   const [isClapped, setIsClapped] = useState(post?.claps?.includes(userId) ? true : false)
   const [isLoved, setIsLoved] = useState(post?.loves?.includes(userId) ? true : false)
   const [isLoading, setisLoading] = useState(false)
+  const [showSeenBy, setShowSeenBy] = useState(false);
   const [showTextEditor, setShowSetTextEditor] = useState(false);
   const [showTextEditorEdit, setShowSetTextEditorEdit] = useState(false);
 
   const marginLeft =
     type == "reply" ? "50px" : type == "nestedReply" ? "100px" : "0px";
   const [tags, setTags] = useState(String(post.tag).split(","));
+
+  const handleSeenBy = () => {
+    setShowSeenBy((current) => !current);
+  };
+
 
   const handleReply = () => {
     setShowSetTextEditor(true)
@@ -55,7 +63,6 @@ export default function PostComponent({ threadTitle, post, type, parentId, threa
   }
 
   const handleLikePost = () => {
-    console.log(post)
     setisLoading(true)
     if (isLiked) {
       setNumOfLikes(numOfLikes - 1)
@@ -166,7 +173,30 @@ export default function PostComponent({ threadTitle, post, type, parentId, threa
           </button>
           <span>{numOfLoves}</span>
           </div>
-          <p className="text-xs">Telah dilihat oleh <span className="text-[#667DF8]">6 partisipan</span></p>
+          { type == 'initial' && 
+            <div className="relative">
+              <p className="text-xs">Telah dilihat oleh <a className="text-[#667DF8] cursor-pointer" onClick={handleSeenBy}>{seenBy.length} partisipan</a></p>
+              { showSeenBy && 
+                <div className="flex flex-col gap-1 rounded-lg shadow-md p-2 w-[250px] absolute bottom-[-100px] right-0 bg-white">
+                  <div className="flex justify-between items-center">
+                    <p className="text-xs">Telah dilihat oleh</p>
+                    <button onClick={handleSeenBy}
+                    ><CloseIcon /></button>
+                  </div>
+                  <div className="h-1 w-5 bg-grey"></div>
+                  {seenBy.map((user, i) => (
+                    <SeenByInfo
+                      key={i}
+                      name={user.name}
+                      photoUrl={user.photo_url}
+                      role={user.role}
+                      nim={user.nim}
+                    />
+                    ))
+                  }
+                </div>
+              }
+            </div>}
         </div>
         </>
         }

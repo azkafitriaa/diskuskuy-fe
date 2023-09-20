@@ -258,7 +258,6 @@ export default function EditThread() {
                             .ref(`/reference_file/${pid}/${file.title}`)
                         
                             desertRef.delete().then(function() {
-                              console.log("coba cek firebase")
                               axios.delete(`${process.env.NEXT_PUBLIC_BE_URL}/forum/ReferenceFile/${object.id}`,
                               {headers: {
                                 "Authorization": `Token ${JSON.parse(getCookie("auth"))?.token}`,

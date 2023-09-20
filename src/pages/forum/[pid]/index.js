@@ -22,6 +22,7 @@ import {
   fetchReferences,
   fetchAnalytics,
   fetchBreadcrumbByThreadId,
+  addInitialPostSeen,
 } from "@/api/forum-api";
 import CircularProgress from "@mui/material/CircularProgress";
 import { isObjectEmpty } from "@/utils/util";
@@ -44,6 +45,7 @@ export default function Forum() {
   const [analytics, setAnalytics] = useState({});
   const [showOnboarding, setShowOnboarding] = useState(true);
   const [breadcrumb, setBreadcrumb] = useState("");
+  const [seenBy, setIsSeenBy] = useState([]);
 
   const handleNestedReply = () => {
     router.push("/create-post");
@@ -90,6 +92,9 @@ export default function Forum() {
       fetchReplyDataById(data?.initial_post?.id).then((data) => {
         setInitialPost(data);
       });
+      addInitialPostSeen(data?.initial_post?.id).then((data) => {
+        setIsSeenBy(data?.seen)
+      });
     });
     fetchNestedReply().then((data) => {
       setInitialNested(data);
@@ -135,6 +140,7 @@ export default function Forum() {
                     threadTitle={forumData.title}
                     post={forumData.initial_post?.post}
                     threadId={forumData?.initial_post?.id}
+                    seenBy={seenBy}
                     type="initial"
                   />
                   {initialPost?.reply_post

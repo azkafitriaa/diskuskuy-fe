@@ -3,7 +3,7 @@ import Link from "next/link";
 import styles from "@/styles/Home.module.css";
 import DosenInfo from "@/components/Home/DosenInfo";
 import { courseName, courseDescription, term } from "@/api/dummy/home";
-import { createWeek, fetchDosenData, fetchThreadMonth, fetchWeeksData } from "@/api/home-api";
+import { createWeek, fetchDosenData, fetchThreadtoday, fetchWeeksData } from "@/api/home-api";
 import CircularProgress from "@mui/material/CircularProgress";
 import AddIcon from "@mui/icons-material/Add";
 import CreateWeekPopUp from "@/components/Home/CreateWeekPopUp";
@@ -20,7 +20,7 @@ export default function Home() {
   const router = useRouter();
   const [weeksData, setWeeksData] = useState([]);
   const [dosenData, setDosenData] = useState([]);
-  const [threadMonthData, setThreadMonthData] = useState([]);
+  const [threadTodayData, setThreadTodayData] = useState([]);
   const [showCreateWeekPopUp, setShowCreateWeekPopUp] = useState(false);
   const [weekNameInput, setWeekNameInput] = useState("");
   const [isLecturer, setIsLecture] = useState(false);
@@ -34,7 +34,7 @@ export default function Home() {
 
   useEffect(() => {
     setIsLoading(true);
-    fetchThreadMonth().then((data) => setThreadMonthData(data));
+    fetchThreadtoday().then((data) => setThreadTodayData(data));
     fetchWeeksData().then((data) => setWeeksData(data));
     fetchDosenData().then((dosenData) => setDosenData(dosenData));
     setIsLecture(
@@ -142,7 +142,8 @@ export default function Home() {
             {!isLoading &&
               weeksData &&
               weeksData.length > 0 &&
-              weeksData.map((week, i) => (
+              weeksData
+              .map((week, i) => (
                 <div className="section" key={week.id} id={week.id}>
                   <div className="flex flex-row justify-between items-center">
                     <h1 className="mb-2 font-bold tracking-tight text-gray-900">
@@ -174,6 +175,7 @@ export default function Home() {
                       </p>
                       <div className="h-1 w-8 bg-grey"></div>
                       {week.threads.map((thread, i) => (
+                        (isLecturer || thread.group == JSON.parse(getCookie("auth"))?.group || thread.group == null) &&
                         <div className={styles.threadCard} key={i}>
                           <div className="group flex items-center">
                             <img
@@ -185,7 +187,10 @@ export default function Home() {
                               alt=""
                             />
                             <div className="rtl:mr-3 ml-3">
-                              <p className="font-normal text-green">Thread</p>
+                              <div className="flex flex-row gap-2">
+                                <p className="font-normal text-green">Thread</p>
+                                {thread.group_name && <div className="px-2 text-black flex items-center" style={{background: '#EED56B'}}><p className="text-xs">{thread.group_name}</p></div>}      
+                              </div>
                               <h3 className="tracking-tight font-semibold">
                                 {thread.title}
                               </h3>
@@ -233,9 +238,9 @@ export default function Home() {
               <h3 className="font-bold text-gray">Daftar Tugas Hari Ini</h3>
               <div className="h-1 w-8 bg-grey"></div>
               {!isLoading &&
-              threadMonthData &&
-              threadMonthData.length > 0 &&
-              threadMonthData.map((thread, i) => (
+              threadTodayData &&
+              threadTodayData.length > 0 &&
+              threadTodayData.map((thread, i) => (
               <div className="flex flex-row border rounded-lg p-3 gap-1 justify-between">
                 <div className="flex flex-col gap-1">
                   <p className="text-xs">Aktivitas Forum:</p>

@@ -26,7 +26,40 @@ export default function Profile() {
     >
       <div className="flex flex-row items-center gap-2">
         <a
-          onClick={() => {}}
+          onClick={() => {
+            var input = document.createElement("input");
+            input.setAttribute("type", "file");
+            input.setAttribute("accept", "image/png, image/jpeg, image/jpg ")
+
+            input.onchange = function () {
+              var file = this.files[0];
+              const upload = firebase
+              .storage()
+              .ref(`/photo_profile/${JSON.parse(getCookie("auth"))?.user_id}/`)
+              .child(file.name)
+              .put(file)
+
+              upload.then(() => {
+                upload.snapshot.ref.getDownloadURL().then((url) => {
+                  axios.put(`${process.env.NEXT_PUBLIC_BE_URL}/auth/profile/`, {
+                    photo_url: url,
+                  }, {headers: {
+                    "Authorization": `Token ${JSON.parse(getCookie("auth"))?.token}`,
+                  }},
+                  ).then(() => {
+                    // localStorage.setItem('photoUrl', url)
+                    const oldAuthCookies = JSON.parse(getCookie("auth"))
+                    oldAuthCookies.photo_url = url
+                    setCookies("auth", JSON.stringify(oldAuthCookies));
+                    toast.success("Berhasil mengubah foto profil")
+                    window.location.reload()
+                  })
+                })
+                })
+              
+            };
+            input.click();
+          }}
           className="cursor-pointer h-16 w-16 relative"
         >
           <img src={JSON.parse(getCookie("auth"))?.photo_url ? JSON.parse(getCookie("auth"))?.photo_url : "/images/default-prof-pic.png"} alt="prof-pic" className="rounded-full object-cover h-16 w-16"
@@ -45,7 +78,8 @@ export default function Profile() {
         <div className="flex flex-col">
           <p className="font-bold text-lg">{profileData.name}</p>
           <p className="text-xs">{profileData.nim}</p>
-          <a className="text-xs text-blue cursor-pointer mt-2"
+          {profileData.group && <div className="px-2 mt-1 text-black w-fit" style={{background: '#EED56B'}}><p className="text-xs">{profileData.group}</p></div>}
+          {/* <a className="text-xs text-blue cursor-pointer mt-2"
           onClick={() => {
             var input = document.createElement("input");
             input.setAttribute("type", "file");
@@ -81,7 +115,7 @@ export default function Profile() {
             input.click();
           }}>
             Ubah foto profil
-          </a>
+          </a> */}
         </div>
       </div>
       <div className="h-[0.5px] bg-grey"></div>

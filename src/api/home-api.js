@@ -101,10 +101,10 @@ export const fetchDosenData = async () => {
   }
 };
 
-export const fetchThreadMonth = async () => {
+export const fetchThreadtoday = async () => {
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BE_URL}/forum/thread-month/`,
+      `${process.env.NEXT_PUBLIC_BE_URL}/forum/thread-today/`,
       {
         method: "GET",
         headers: {

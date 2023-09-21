@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import styles from "@/styles/CreateThread.module.css";
 import { format } from 'date-fns'
 import TextEditor from "@/components/Forum/TextEditor";
-import { createReferenceFile, createThread } from "@/api/create-thread-api";
+import { createReferenceFile, createThread, fetchAllGroup } from "@/api/create-thread-api";
 import { CircularProgress, MenuItem, Select } from "@mui/material";
 import { useRouter } from "next/router";
 import ErrorIcon from "@mui/icons-material/Error";
@@ -22,10 +22,12 @@ export default function CreateThread() {
   const [mechAndExp, setMechAndExp] = useState("");
   const [referenceFileList, setReferenceFileList] = useState([]);
   const [tags, setTags] = useState([]);
+  const [group, setGroup] = useState("");
   const [isInitialPostEmpty, setIsInitialPostEmpty] = useState(false);
   const minDate = format(new Date(), "yyyy-MM-ddTMM:ss");
-  const [isLoading, setLoading] = useState(false);
+  // const [isLoading, setLoading] = useState(false);
   const [weekName, setWeekName] = useState("");
+  const [groupOptions, setGroupOptions] = useState([]);
 
   const tagOptions = ["pendapat", "pertanyaan", "bingung"];
 
@@ -37,6 +39,7 @@ export default function CreateThread() {
     const weekId = pathArray[pathArray.length - 2];
 
     fetchWeekDataById(weekId).then((data) => setWeekName(data.name));
+    fetchAllGroup().then((data) => setGroupOptions([{"id": 0, "name": "All"}].concat(data)));
   }, []);
 
   const handleChangeTitle = (event) => {
@@ -66,6 +69,10 @@ export default function CreateThread() {
     setReferenceFileList(uploaded);
   };
 
+  const handleChangeGroup = (event) => {
+    setGroup(event.target.value);
+  };
+
   const handleChangeTag = (event) => {
     setTags(event.target.value);
   };
@@ -93,6 +100,7 @@ export default function CreateThread() {
         description: description,
         mechanism_expectation: mechAndExp,
         week: pid,
+        group: group!= 0 ? group : null
       };
 
       createThread(requestBody).then((data) => {
@@ -149,6 +157,25 @@ export default function CreateThread() {
                 >
                   <div className="flex flex-row gap-5">
                     <div className=" basis-1/2 flex flex-col gap-2">
+                      <h3 className="font-bold">Group</h3>
+                      <div className="h-1 w-5 bg-grey"></div>
+                      <div>
+                        <Select
+                          className="bg-white w-full text-sm"
+                          value={group}
+                          onChange={handleChangeGroup}
+                        >
+                          {groupOptions.map((group, i) => (
+                            <MenuItem
+                              key={group.name}
+                              value={group.id}
+                              className="text-sm"
+                            >
+                              {group.name}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </div>
                       <h3 className="font-bold">Judul Thread</h3>
                       <div className="h-1 w-5 bg-grey"></div>
                       <input
@@ -260,6 +287,7 @@ export default function CreateThread() {
                     <input
                       type="submit"
                       value={isLoading ? "Loading..." : "Simpan"}
+                      // value={"Simpan"}
                       className="bg-green text-white p-2 rounded cursor-pointer w-1/4"
                       disabled={isLoading}
                     />

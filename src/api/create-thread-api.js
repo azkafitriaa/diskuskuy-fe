@@ -55,3 +55,27 @@ export const createReferenceFile = async (file, threadId) => {
     });
   });
 };
+
+export const fetchAllGroup = async () => {
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BE_URL}/auth/group`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Token ${JSON.parse(getCookie("auth"))?.token}`,
+        },
+      }
+    );
+
+    if (!response.ok) {
+      const responseError = await response.json();
+      const message = `${responseError.errors.error_message}`;
+      throw new Error(message);
+    }
+    const responseData = await response.json();
+    return responseData;
+  } catch (error) {
+    toast.error(error.message);
+  }
+};

@@ -43,7 +43,7 @@ export default function Forum() {
   const [onboardingData, setOnboardingData] = useState([]);
   const [isLecturer, setIsLecture] = useState(false);
   const [analytics, setAnalytics] = useState({});
-  const [showOnboarding, setShowOnboarding] = useState(true);
+  const [showOnboarding, setShowOnboarding] = useState(false);
   const [breadcrumb, setBreadcrumb] = useState("");
   const [seenBy, setIsSeenBy] = useState([]);
 
@@ -74,6 +74,10 @@ export default function Forum() {
 
     fetchThreadDataById(threadId).then((data) => {
       setForumData(data);
+      addInitialPostSeen(data?.initial_post?.id).then((data) => {
+        setShowOnboarding(data?.first ?? true)
+        setIsSeenBy(data?.seen)
+      });
       setOnboardingData(
         data?.discussion_guide?.state == 1
           ? dataObd1
@@ -91,9 +95,6 @@ export default function Forum() {
 
       fetchReplyDataById(data?.initial_post?.id).then((data) => {
         setInitialPost(data);
-      });
-      addInitialPostSeen(data?.initial_post?.id).then((data) => {
-        setIsSeenBy(data?.seen)
       });
     });
     fetchNestedReply().then((data) => {

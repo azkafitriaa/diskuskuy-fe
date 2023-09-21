@@ -2,7 +2,7 @@ import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import React, { useEffect, useRef, useState } from "react";
 import styles from "@/styles/CreateThread.module.css";
 import TextEditor from "@/components/Forum/TextEditor";
-import { CircularProgress, MenuItem, Select } from "@mui/material";
+import { CircularProgress, MenuItem, Select, FormControl } from "@mui/material";
 import { useRouter } from "next/router";
 import ErrorIcon from "@mui/icons-material/Error";
 import Navbar from "@/components/Navbar";
@@ -29,6 +29,8 @@ export default function EditThread() {
   const [referenceFileList, setReferenceFileList] = useState([]);
   const [referenceFile, setReferenceFile] = useState(null)
   const [tags, setTags] = useState([]);
+  const [group, setGroup] = useState("");
+  const [groupName, setGroupName] = useState("");
   const [isInitialPostEmpty, setIsInitialPostEmpty] = useState(false);
   const [content, setContent] = useState("")
   const minDate = format(new Date(), "yyyy-MM-ddTMM:SS");
@@ -45,6 +47,8 @@ export default function EditThread() {
     fetchThreadDataById(threadId)
     .then(data => {
       setForumData(data)
+      setGroup(data.group)
+      setGroupName(data.group_name)
       setTitle(data.title)
       const deadlineData = data.deadline
       setDeadline(deadlineData.substring(0, deadlineData.length-1))
@@ -203,6 +207,22 @@ export default function EditThread() {
               <form onSubmit={handleSubmit} className="flex flex-col gap-5">
                 <div className="flex flex-row gap-5">
                   <div className=" basis-1/2 flex flex-col gap-2">
+                  <h3 className="font-bold">Group</h3>
+                    <div className="h-1 w-5 bg-grey"></div>
+                    <div>
+                      <FormControl className="w-full" disabled>
+                      <Select
+                        className="bg-white w-full text-sm"
+                        value={group}
+                      >
+                        <MenuItem
+                          value={group}
+                          className="text-sm">
+                          {groupName}
+                        </MenuItem>
+                      </Select>
+                      </FormControl>
+                    </div>
                     <h3 className="font-bold text-">Judul Thread</h3>
                     <div className="h-1 w-5 bg-[#C4C4C4]"></div>
                     <input

@@ -138,6 +138,7 @@ export default function Forum() {
                     parent
                     parentId={pid}
                     threadTitle={forumData.title}
+                    threadGroup={forumData.group_name}
                     post={forumData.initial_post?.post}
                     threadId={forumData?.initial_post?.id}
                     seenBy={seenBy}

@@ -5,13 +5,14 @@ import { discussionGuideConstants } from "@/constants/DiscussionGuide";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import {
-  fetchDiscussionGuideDataByThreadId,
-  updateDiscussionGuideStateById,
+  // fetchDiscussionGuideDataByThreadId,
+  // updateDiscussionGuideStateById,
+  updateThreadStateById,
 } from "@/api/discussion-guide-api";
 import { formatDate, formatDateDeadline, formatTime } from "@/utils/util";
 import DiscussionGuideUpdateConfirmationPopUp from "@/components/Forum/DiscussionGuideUpdateConfirmationPopUp";
 import Navbar from "@/components/Navbar";
-import { fetchBreadcrumbByThreadId } from "@/api/forum-api";
+import { fetchBreadcrumbByThreadId, fetchThreadDataById } from "@/api/forum-api";
 import { fetchProfileData } from "@/api/auth-api";
 import { getCookie, getCookies } from "cookies-next";
 import Head from "next/head";
@@ -21,7 +22,8 @@ export default function DiscussionGuide() {
   const { pid } = router.query;
 
   const [breadcrumb, setBreadcrumb] = useState("");
-  const [discussionGuideData, setDiscussionGuideData] = useState({});
+  const [forumData, setForumData] = useState({});
+  // const [discussionGuideData, setDiscussionGuideData] = useState({});
   const [deadline, setDeadline] = useState("");
   const [profileData, setProfileData] = useState({});
   const [
@@ -41,10 +43,15 @@ export default function DiscussionGuide() {
     const pathArray = path.split("/");
     const threadId = pathArray[pathArray.length - 2];
 
-    fetchDiscussionGuideDataByThreadId().then((data) => {
-      setDiscussionGuideData(data);
+    fetchThreadDataById(threadId).then((data) => {
+      setForumData(data);
       setDeadline(formatDateDeadline(data.deadline));
     });
+
+    // fetchDiscussionGuideDataByThreadId().then((data) => {
+    //   setDiscussionGuideData(data);
+    //   setDeadline(formatDateDeadline(data.deadline));
+    // });
 
     fetchBreadcrumbByThreadId(threadId).then((data) => {
       setBreadcrumb(data);
@@ -62,9 +69,9 @@ export default function DiscussionGuide() {
   };
 
   const handleUpdateState = () => {
-    updateDiscussionGuideStateById(
-      discussionGuideData.id,
-      parseInt(discussionGuideData.state) + 1
+    updateThreadStateById(
+      forumData.id,
+      parseInt(forumData.state) + 1
     ).then((data) => {
       if (data) window.location.reload();
     });
@@ -73,15 +80,15 @@ export default function DiscussionGuide() {
   const checkboxDisabled = (i) => {
     return (
       !isLecturer ||
-      i + 1 < discussionGuideData.state ||
-      i + 1 > discussionGuideData.state
+      i + 1 < forumData.state ||
+      i + 1 > forumData.state
     );
   };
 
   return (
     <>
       <Head>
-        <title>Panduan Diskusi: {discussionGuideData.thread_title}</title>
+        <title>Panduan Diskusi: {forumData.title}</title>
       </Head>
       <main className={styles.main}>
         <Navbar />
@@ -96,7 +103,7 @@ export default function DiscussionGuide() {
             </a>
             <ChevronRightIcon />
             <a className="cursor-pointer" href={`/forum/${pid}`}>
-              Thread: {discussionGuideData.thread_title}
+              Thread: {forumData.title}
             </a>
             <ChevronRightIcon />
             <a className="font-bold">Panduan Diskusi</a>
@@ -128,7 +135,7 @@ export default function DiscussionGuide() {
                     className="block p-6 bg-white rounded-lg flex flex-row gap-5 test"
                     style={{
                       borderBottom:
-                        discussionGuideData.state == i + 1
+                        forumData.state == i + 1
                           ? "5px solid #2ECC71"
                           : null,
                       cursor: !checkboxDisabled(i) ? "pointer" : "auto",
@@ -158,7 +165,7 @@ export default function DiscussionGuide() {
                     </div>
                     <input
                       type="checkbox"
-                      checked={i + 1 < discussionGuideData.state}
+                      checked={i + 1 < forumData.state}
                       disabled={checkboxDisabled(i)}
                     />
                   </div>
@@ -175,9 +182,9 @@ export default function DiscussionGuide() {
                     <span style={{ color: "#FF5023" }}>{deadline}</span>
                   </p>
                   <p className="font-bold">Deskripsi:</p>
-                  <p>{discussionGuideData.description}</p>
+                  <p>{forumData.description}</p>
                   <p className="font-bold">Mekanisme dan Ekspektasi:</p>
-                  <p>{discussionGuideData.mechanism_expectation}</p>
+                  <p>{forumData.mechanism_expectation}</p>
                 </div>
               </div>
             </div>

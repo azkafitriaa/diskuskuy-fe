@@ -9,7 +9,7 @@ import CreateEditPostSection from "./CreateEditPostSection";
 import CloseIcon from '@mui/icons-material/Close';
 import SeenByInfo from "./SeenByInfo";
 
-export default function PostComponent({ threadTitle, post, type, parentId, threadId, seenBy }) {
+export default function PostComponent({ threadTitle, threadGroup, post, type, parentId, threadId, seenBy }) {
   const userId = parseInt(JSON.parse(getCookie("auth"))?.user_id)
   const router = useRouter();
   const [numOfLikes, setNumOfLikes] = useState(post?.number_of_likes ?? 0);
@@ -107,9 +107,8 @@ export default function PostComponent({ threadTitle, post, type, parentId, threa
         <div className="rounded-full w-16 h-16" >
           <img src={post?.creator_photo_url ?? "/images/default-prof-pic.png"} className="rounded-full w-16 h-16 object-cover" />
         </div>
-        <div className="px-2 text-white" style={{background: post.creator_role == 'lecturer' ? '#667DF8' : '#4CBFAC'}}><p>{post.creator_role == 'lecturer' ? 'Dosen' : 'Mahasiswa'}</p></div>
-        {/* TODO: ganti jd nama kelompok */}
-        {post.creator_role != 'lecturer' && <div className="px-2" style={{background: '#EED56B'}}><p>{post.creator_role == 'lecturer' ? 'Dosen' : 'Mahasiswa'}</p></div>}
+        <div className="px-2 text-white w-full text-center" style={{background: post.creator_role == 'lecturer' ? '#667DF8' : '#4CBFAC'}}><p>{post.creator_role == 'lecturer' ? 'Dosen' : 'Mahasiswa'}</p></div>
+        {post.creator_role != 'lecturer' && <div className="px-2 w-full text-center" style={{background: '#EED56B'}}><p>{post.creator_group}</p></div>}
       </div>
       <div className="flex flex-col basis-11/12 gap-2">
         { !showTextEditorEdit &&
@@ -117,6 +116,7 @@ export default function PostComponent({ threadTitle, post, type, parentId, threa
         <div className="flex flex-col gap-1">
           <div className="flex flex-row items-start justify-between">
             <div className="flex flex-col gap-1">
+              {threadGroup && <div className="px-2 text-black flex items-center w-fit" style={{background: '#EED56B'}}><p className="text-xs">{threadGroup}</p></div>}      
               {threadTitle &&<h1 className="font-bold">{threadTitle}</h1>}
               {!threadTitle && <h3 className="font-bold">{post.creator_name}</h3>}
               {threadTitle && <p className="text-xs">
@@ -177,7 +177,7 @@ export default function PostComponent({ threadTitle, post, type, parentId, threa
             <div className="relative">
               <p className="text-xs">Telah dilihat oleh <a className="text-[#667DF8] cursor-pointer" onClick={handleSeenBy}>{seenBy.length} partisipan</a></p>
               { showSeenBy && 
-                <div className="flex flex-col gap-1 rounded-lg shadow-md p-2 w-[250px] absolute bottom-[-100px] right-0 bg-white">
+                <div className="flex flex-col gap-1 rounded-lg shadow-md p-2 w-[250px] max-h-[200px] absolute bottom-[-100px] right-0 bg-white">
                   <div className="flex justify-between items-center">
                     <p className="text-xs">Telah dilihat oleh</p>
                     <button onClick={handleSeenBy}
@@ -190,7 +190,7 @@ export default function PostComponent({ threadTitle, post, type, parentId, threa
                       name={user.name}
                       photoUrl={user.photo_url}
                       role={user.role}
-                      nim={user.nim}
+                      group={user.group}
                     />
                     ))
                   }

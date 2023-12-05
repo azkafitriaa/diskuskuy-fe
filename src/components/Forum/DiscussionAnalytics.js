@@ -68,14 +68,14 @@ export default function DiscussionAnalytics({ reply, nestedReply, analytics }) {
             <ExpandMoreIcon />
           </>
         )}
-        {showExpansion && (
+        {/* {showExpansion && (
           <>
             <span>Sembunyikan</span>
             <ExpandLessIcon />
           </>
-        )}
+        )} */}
       </a>
-      {showExpansion && (
+      {/* {showExpansion && ( */}
         <>
           <h3 className="font-bold text-gray">Jumlah Tag Posting</h3>
           <div className="h-1 w-5 bg-grey"></div>
@@ -94,7 +94,7 @@ export default function DiscussionAnalytics({ reply, nestedReply, analytics }) {
             </div>
           </div>
         </>
-      )}
+      {/* )} */}
     </div>
   );
 }

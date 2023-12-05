@@ -3,7 +3,7 @@ import Link from "next/link";
 import styles from "@/styles/Home.module.css";
 import DosenInfo from "@/components/Home/DosenInfo";
 import { courseName, courseDescription, term } from "@/api/dummy/home";
-import { createWeek, fetchDosenData, fetchThreadtoday, fetchWeeksData } from "@/api/home-api";
+import { createWeek, fetchDosenData, fetchThreadThisMonth, fetchThreadToday, fetchWeeksData } from "@/api/home-api";
 import CircularProgress from "@mui/material/CircularProgress";
 import AddIcon from "@mui/icons-material/Add";
 import CreateWeekPopUp from "@/components/Home/CreateWeekPopUp";
@@ -11,21 +11,24 @@ import { useRouter } from "next/router";
 import Navbar from "@/components/Navbar";
 import { getCookie, getCookies } from "cookies-next";
 import Head from "next/head";
-import { formatDateDeadline, formatDateDeadline2 } from "@/utils/util";
+import { formatDate, formatDateDeadline, formatDateDeadline2, getDateFromRawDate } from "@/utils/util";
 import Calendar from 'react-calendar';
 import ServerTime from "@/components/Home/ServerTime";
+import TodayTask from "@/components/Home/TodayTask";
 
 
 export default function Home() {
   const router = useRouter();
   const [weeksData, setWeeksData] = useState([]);
   const [dosenData, setDosenData] = useState([]);
-  const [threadTodayData, setThreadTodayData] = useState([]);
+  // const [threadTodayData, setThreadTodayData] = useState([]);
+  const [threadThisMonthData, setThreadThisMonthData] = useState([]);
+  const [threadSelectedDateData, setThreadSelectedDateData] = useState([]);
   const [showCreateWeekPopUp, setShowCreateWeekPopUp] = useState(false);
   const [weekNameInput, setWeekNameInput] = useState("");
   const [isLecturer, setIsLecture] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [value, onChange] = useState(new Date());
+  const [dateValue, setDateValue] = useState(new Date());
   const [today, setToday] = useState(new Date());
   const [todayMonth, setTodayMonth] = useState(null);
   const [todayYear, setTodayYear] = useState(null);
@@ -34,7 +37,10 @@ export default function Home() {
 
   useEffect(() => {
     setIsLoading(true);
-    fetchThreadtoday().then((data) => setThreadTodayData(data));
+    fetchThreadThisMonth().then((data) => {
+      setThreadThisMonthData(data)
+      setThreadSelectedDateData(filterThreadBySelectedDate(today.getDate()))
+    });
     fetchWeeksData().then((data) => setWeeksData(data));
     fetchDosenData().then((dosenData) => setDosenData(dosenData));
     setIsLecture(
@@ -65,6 +71,14 @@ export default function Home() {
     setWeekNameInput(event.target.value);
   };
 
+  const handleDateValueChange = (value) => {
+    setDateValue(value);
+    setThreadSelectedDateData(filterThreadBySelectedDate(new Date(value).getDate()))
+  }
+
+  const filterThreadBySelectedDate = (date) => {
+    return threadThisMonthData.filter((thread) => getDateFromRawDate(thread.deadline) == date)
+  }
   return (
     <>
       <Head>
@@ -232,30 +246,20 @@ export default function Home() {
               <div className="h-1 w-8 bg-grey"></div>
               <p className="text-[#6B6B6B] font-bold text-center">{todayMonth} {todayYear}</p>
               <div className="h-[1px] w-full bg-[#E2E2E2]"></div>
-              <Calendar onChange={onChange} value={value} className={styles.calendar} showNeighboringMonth={false} showNavigation={false}/>
+              <Calendar onChange={handleDateValueChange} value={dateValue} className={styles.calendar} showNeighboringMonth={false} showNavigation={false}/>
             </div>
             <div className="section">
-              <h3 className="font-bold text-gray">Daftar Tugas Hari Ini</h3>
+              <h3 className="font-bold text-gray">Daftar Tugas {formatDate(dateValue)}</h3>
               <div className="h-1 w-8 bg-grey"></div>
+              {!threadSelectedDateData ||
+              threadSelectedDateData.length == 0 &&
+              <p className="italic">Belum ada tugas</p>
+              }
               {!isLoading &&
-              threadTodayData &&
-              threadTodayData.length > 0 &&
-              threadTodayData.map((thread, i) => (
-              <div className="flex flex-row border rounded-lg p-3 gap-1 justify-between">
-                <div className="flex flex-col gap-1">
-                  <p className="text-xs">Aktivitas Forum:</p>
-                  <p className="font-bold text-xs">{thread.title}</p>
-                  <div className="bg-red text-white px-2 text-xs">Deadline: {formatDateDeadline(thread.deadline)}</div>
-                  <Link href={"/forum/" + thread.id}>
-                    <button className="bg-transparent hover:bg-green text-green text-xs font-semibold hover:text-white py-2 px-4 border border-green hover:border-transparent rounded-lg">
-                      Lihat
-                    </button>
-                  </Link>
-                </div>
-                <div className="flex flex-col gap-1">
-                <div className="h-5 w-5 border rounded"></div>
-                </div>
-              </div>
+              threadSelectedDateData &&
+              threadSelectedDateData.length > 0 &&
+              threadSelectedDateData.map((thread, i) => (
+              <TodayTask thread={thread} />
               ))}
             </div>
           </div>

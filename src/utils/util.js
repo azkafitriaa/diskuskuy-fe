@@ -26,3 +26,11 @@ export const formatDateDeadline2 = (date) => {
   const localeDateArray = localeDateString.split(", ")
   return `${localeDateArray[1]} ${localeDateArray[2]} WIB`
 }
+
+export const getDateFromRawDate = (date) => {
+  date = new Date(date);
+  const localeDateString = new Date(date).toLocaleDateString('id-ID', { weekday:"long", year:"numeric", month:"short", day:"numeric", hour:"numeric", minute: "numeric", timeZone: 'UTC'})
+  const localeDateArray = localeDateString.split(", ")
+  const localeDate = localeDateArray[1].split(" ")
+  return localeDate[0]
+}

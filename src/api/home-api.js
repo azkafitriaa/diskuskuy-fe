@@ -4,7 +4,7 @@ import { toast } from "react-hot-toast";
 export const fetchWeeksData = async () => {
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BE_URL}/forum/Week/`,
+      `${process.env.NEXT_PUBLIC_BE_URL}/forum/week/`,
       {
         method: "GET",
         headers: {
@@ -28,7 +28,7 @@ export const fetchWeeksData = async () => {
 export const fetchWeekDataById = async (weekId) => {
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BE_URL}/forum/Week/${weekId}/`,
+      `${process.env.NEXT_PUBLIC_BE_URL}/forum/week/${weekId}/`,
       {
         method: "GET",
         headers: {
@@ -52,7 +52,7 @@ export const fetchWeekDataById = async (weekId) => {
 export const createWeek = async (nameRequest) => {
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BE_URL}/forum/Week/`,
+      `${process.env.NEXT_PUBLIC_BE_URL}/forum/week/`,
       {
         method: "POST",
         headers: {

@@ -29,7 +29,7 @@ export default function References({pid, references, refresh}) {
 
                 upload.then((res) => {
                   upload.snapshot.ref.getDownloadURL().then((url) => {
-                    axios.post(`${process.env.NEXT_PUBLIC_BE_URL}/forum/ReferenceFile/`, {
+                    axios.post(`${process.env.NEXT_PUBLIC_BE_URL}/forum/reference-file/`, {
                       title: res?._delegate.metadata.name,
                       url: url,
                       thread: pid
@@ -70,7 +70,7 @@ export default function References({pid, references, refresh}) {
               .ref(`/reference_file/${pid}/${object.title}`)
           
               desertRef.delete().then(function() {
-                axios.delete(`${process.env.NEXT_PUBLIC_BE_URL}/forum/ReferenceFile/${object.id}`,
+                axios.delete(`${process.env.NEXT_PUBLIC_BE_URL}/forum/reference-file/${object.id}`,
                 {headers: {
                   "Authorization": `Token ${JSON.parse(getCookie("auth"))?.token}`,
                 }},

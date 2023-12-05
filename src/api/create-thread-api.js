@@ -9,7 +9,7 @@ export const createThread = async (requestBody) => {
   };
   try {
     const response = await axios.post(
-      `${process.env.NEXT_PUBLIC_BE_URL}/forum/Thread/`,
+      `${process.env.NEXT_PUBLIC_BE_URL}/forum/thread/`,
       requestBody,
       {
         headers: headers,
@@ -35,7 +35,7 @@ export const createReferenceFile = async (file, threadId) => {
       };
       axios
         .post(
-          `${process.env.NEXT_PUBLIC_BE_URL}/forum/ReferenceFile/`,
+          `${process.env.NEXT_PUBLIC_BE_URL}/forum/reference-file/`,
           requestBody,
           {
             headers: {

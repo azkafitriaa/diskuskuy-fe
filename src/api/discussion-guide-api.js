@@ -31,7 +31,7 @@ export const fetchDiscussionGuideDataByThreadId = async () => {
 export const updateThreadStateById = async (id, stateRequest) => {
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BE_URL}/forum/Thread/${id}/`,
+      `${process.env.NEXT_PUBLIC_BE_URL}/forum/thread/${id}/`,
       {
         method: "PATCH",
         headers: {

@@ -8,7 +8,7 @@ export const editThread = async (threadId, requestBody) => {
   };
   try {
     const response = await axios.patch(
-      `${process.env.NEXT_PUBLIC_BE_URL}/forum/Thread/${threadId}/`,
+      `${process.env.NEXT_PUBLIC_BE_URL}/forum/thread/${threadId}/`,
       requestBody,
       {
         headers: headers,

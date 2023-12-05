@@ -62,12 +62,12 @@ export default function DiscussionAnalytics({ reply, nestedReply, analytics }) {
         onClick={toggleShowExpansion}
         className="cursor-pointer text-xs text-gray font-bold"
       >
-        {!showExpansion && (
+        {/* {!showExpansion && (
           <>
             <span>Lihat selengkapnya</span>
             <ExpandMoreIcon />
           </>
-        )}
+        )} */}
         {/* {showExpansion && (
           <>
             <span>Sembunyikan</span>

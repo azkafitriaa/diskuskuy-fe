@@ -50,12 +50,12 @@ export default function CreateEditPostSection({isEdit, isInitialPost, threadId, 
                   router.reload(window.location.pathname)
                 });
               } else if (parentType === "reply") {
-                replyNestedPost(requestBody).then((data) => {
+                replyNestedPost(requestBody).then(() => {
                   toast.success("Berhasil membuat nested reply post");
                   router.reload(window.location.pathname)
                 });
               } else {
-                toast.error("maaf gabisa bos")
+                toast.error("Terjadi kesalahan")
               }
             } else {
               setIsContentEmpty(true);

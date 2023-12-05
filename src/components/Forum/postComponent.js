@@ -118,7 +118,10 @@ export default function PostComponent({ threadTitle, threadGroup, post, type, pa
             <div className="flex flex-col gap-1">
               {threadGroup && <div className="px-2 text-black flex items-center w-fit" style={{background: '#EED56B'}}><p className="text-xs">{threadGroup}</p></div>}      
               {threadTitle &&<h1 className="font-bold">{threadTitle}</h1>}
-              {!threadTitle && <h3 className="font-bold">{post.creator_name}</h3>}
+              {!threadTitle && <>
+                <h3 className="font-bold">{post.creator_name}</h3>
+                <p className="text-xs">{formatDate(post.date)} ({formatTime(post.date)} WIB)</p>
+              </>}
               {threadTitle && <p className="text-xs">
                 Thread dimulai oleh {<strong>{post.creator_name}</strong>}{" "}
                 pada {formatDate(post.date)} ({formatTime(post.date)} WIB)
@@ -184,6 +187,7 @@ export default function PostComponent({ threadTitle, threadGroup, post, type, pa
                     ><CloseIcon /></button>
                   </div>
                   <div className="h-1 w-5 bg-grey"></div>
+                  <div className="overflow-auto">
                   {seenBy.map((user, i) => (
                     <SeenByInfo
                       key={i}
@@ -194,6 +198,7 @@ export default function PostComponent({ threadTitle, threadGroup, post, type, pa
                     />
                     ))
                   }
+                  </div>
                 </div>
               }
             </div>}

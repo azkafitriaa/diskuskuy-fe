@@ -25,7 +25,7 @@ export default function CreateThread() {
   const [group, setGroup] = useState("");
   const [isInitialPostEmpty, setIsInitialPostEmpty] = useState(false);
   const minDate = format(new Date(), "yyyy-MM-ddTMM:ss");
-  // const [isLoading, setLoading] = useState(false);
+  const [isLoading, setLoading] = useState(false);
   const [weekName, setWeekName] = useState("");
   const [groupOptions, setGroupOptions] = useState([]);
 

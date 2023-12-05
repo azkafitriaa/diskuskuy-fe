@@ -61,10 +61,14 @@ export default function Forum() {
     } else {
       console.log("offline");
     }
-
+    
     fetchAnalytics(threadId).then((data) => {
       setAnalytics(data);
     });
+
+    const userId = getCookie("auth")
+      ? JSON.parse(getCookie("auth"))?.user_id
+      : null
 
     setIsLecture(
       getCookie("auth")
@@ -74,10 +78,16 @@ export default function Forum() {
 
     fetchThreadDataById(threadId).then((data) => {
       setForumData(data);
-      addInitialPostSeen(data?.initial_post?.id).then((data) => {
-        setShowOnboarding(data?.first ?? true)
-        setIsSeenBy(data?.seen)
-      });
+      console.log(data)
+      if (data?.initial_post?.seen.includes(userId)) {
+        setShowOnboarding(false)
+        setIsSeenBy(data?.initial_post?.seen_user_info)
+      } else {
+        setShowOnboarding(true)
+        addInitialPostSeen(data?.initial_post?.id).then((data) => {
+          setIsSeenBy(data)
+        });
+      }
       setOnboardingData(
         data?.discussion_guide?.state == 1
           ? dataObd1

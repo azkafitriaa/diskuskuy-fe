@@ -39,7 +39,7 @@ export default function Home() {
     setIsLoading(true);
     fetchThreadThisMonth().then((data) => {
       setThreadThisMonthData(data)
-      setThreadSelectedDateData(filterThreadBySelectedDate(today.getDate()))
+      setThreadSelectedDateData(data.filter((thread) => getDateFromRawDate(thread.deadline) == today.getDate()))
     });
     fetchWeeksData().then((data) => setWeeksData(data));
     fetchDosenData().then((dosenData) => setDosenData(dosenData));

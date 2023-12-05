@@ -115,8 +115,8 @@ export default function DiscussionGuide({
       </form>}
       {!isEditMode && <>
       {deadline != null && (
-        <p>
-          <strong>Deadline:</strong> {deadline}
+        <p className="font-bold">
+          Deadline:{" "}<span style={{ color: "#FF5023" }}>{deadline}</span>
         </p>
       )}
       <p>

@@ -5,7 +5,7 @@ import { toast } from "react-hot-toast";
 export const fetchThreadDataById = async (threadId) => {
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BE_URL}/forum/Thread/` + threadId,
+      `${process.env.NEXT_PUBLIC_BE_URL}/forum/thread/` + threadId,
       {
         method: "GET",
         headers: {
@@ -137,7 +137,7 @@ export const fetchNestedReply = async () => {
 
 export const fetchReferences = async () => {
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BE_URL}/forum/ReferenceFile`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BE_URL}/forum/reference-file`, {
       method: "GET",
       headers: {
         "Authorization": `Token ${JSON.parse(getCookie("auth"))?.token}`,
@@ -280,33 +280,10 @@ export const fetchAnalytics = async (threadId) => {
   }
 };
 
-// export const fetchShowOnboardingData = async (threadId, state) => {
-//   try {
-//     const response = await fetch(
-//       `${process.env.NEXT_PUBLIC_BE_URL}/forum/onboarding?threadId=${threadId}&state=${state}`,
-//       {
-//         method: "GET",
-//         headers: {
-//           "Authorization": `Token ${JSON.parse(getCookie("auth"))?.token}`,
-//         }
-//       }
-//     );
-
-//     if (!response.ok) {
-//       const responseError = await response.json();
-//       const message = `${responseError.errors.error_message}`;
-//       throw new Error(message);
-//     }
-//     const responseData = await response.json();
-//     return responseData;
-//   } catch (error) {
-//     // toast.error(error.message)
-//   }
-// };
 export const fetchBreadcrumbByThreadId = async (threadId) => {
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BE_URL}/forum/Breadcrumb/` + threadId,
+      `${process.env.NEXT_PUBLIC_BE_URL}/forum/breadcrumb/` + threadId,
       {
         method: "GET",
         headers: {

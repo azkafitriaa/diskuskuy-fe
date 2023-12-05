@@ -111,7 +111,7 @@ export default function EditThread() {
         
         axios
           .post(
-            `${process.env.NEXT_PUBLIC_BE_URL}/forum/ReferenceFile/`,
+            `${process.env.NEXT_PUBLIC_BE_URL}/forum/reference-file/`,
             request,
             {
               headers: {
@@ -278,7 +278,7 @@ export default function EditThread() {
                             .ref(`/reference_file/${pid}/${file.title}`)
                         
                             desertRef.delete().then(function() {
-                              axios.delete(`${process.env.NEXT_PUBLIC_BE_URL}/forum/ReferenceFile/${object.id}`,
+                              axios.delete(`${process.env.NEXT_PUBLIC_BE_URL}/forum/reference-file/${object.id}`,
                               {headers: {
                                 "Authorization": `Token ${JSON.parse(getCookie("auth"))?.token}`,
                               }},
